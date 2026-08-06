@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Violeta Rosa — Check My Record</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Cinzel:wght@500;700&family=Jost:wght@400;500;600&display=swap');
+  :root{
+    --parchment:#f4ecdd; --ink:#2b1830; --violet:#4a1d5c; --violet-deep:#2e1138;
+    --wine:#7a1f3d; --gold:#b8892b; --gold-light:#d9b96a; --teal:#1f5f5b; --line:rgba(74,29,92,0.18); --pagebg:#150a1a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, rgba(74,29,92,0.35), transparent 60%),radial-gradient(1000px 500px at 100% 0%, rgba(184,137,43,0.16), transparent 55%),var(--pagebg);color:var(--ink);font-family:'Jost', sans-serif;min-height:100vh;padding-bottom:60px;}
+  header{background:linear-gradient(180deg, var(--violet-deep), var(--violet) 70%, var(--violet));color:var(--parchment);padding:44px 24px 30px;text-align:center;border-bottom:4px solid var(--gold);position:relative;}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:4px;background:repeating-linear-gradient(90deg, var(--gold-light) 0 10px, transparent 10px 20px);opacity:.6;}
+  header h1{font-family:'Cinzel', serif;font-weight:700;letter-spacing:.06em;font-size:clamp(22px, 4vw, 32px);margin:0 0 6px;}
+  header p{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:17px;margin:0;color:var(--gold-light);}
+  .navlinks{margin-top:14px;font-size:12.5px;}
+  .navlinks a{color:var(--gold-light);text-decoration:none;border-bottom:1px dotted var(--gold-light);margin:0 8px;}
+  .wrap{max-width:700px;margin:0 auto;padding:0 20px;}
+  .panel{background:#fffdf8;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 18px rgba(43,24,48,0.07);padding:26px 24px;margin-top:34px;}
+  .panel h2{font-family:'Cinzel', serif;font-size:18px;letter-spacing:.04em;color:var(--violet);margin:0 0 18px;display:flex;align-items:center;gap:10px;}
+  .panel h2::after{content:"";flex:1;height:1px;background:var(--line);}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--violet);margin-bottom:5px;font-weight:500;}
+  input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:4px;background:#fff;font-family:'Jost', sans-serif;font-size:14.5px;color:var(--ink);margin-bottom:14px;}
+  .btn{font-family:'Cinzel', serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--violet-deep);border:none;padding:11px 22px;border-radius:4px;cursor:pointer;width:100%;}
+  .btn:hover{background:var(--gold-light);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .err{color:var(--wine);font-size:13px;margin-top:10px;display:none;}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;color:#fff;}
+  .result-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+  .strike-count{font-family:'Cinzel', serif;font-weight:700;font-size:22px;color:var(--violet);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{font-family:'Cinzel', serif;font-size:11px;letter-spacing:.05em;text-transform:uppercase;text-align:left;color:var(--violet);border-bottom:2px solid var(--violet);padding:8px 10px;}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .empty{text-align:center;padding:20px 10px;color:#8a7a8e;font-style:italic;font-family:'Cormorant Garamond', serif;font-size:16px;}
+  footer{text-align:center;margin-top:40px;font-size:12px;color:#8a7699;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Check My Record</h1>
+  <p>House of Violeta Rosa · Ledger of Conduct</p>
+  <div class="navlinks"><a href="index.html">Home</a> · <a href="violeta-rosa-hicom.html">HICOM access</a></div>
+</header>
+
+<div class="wrap">
+  <div class="panel" id="lookupPanel">
+    <h2>Enter Your Details</h2>
+    <label for="playerInput">Player / Username</label>
+    <input type="text" id="playerInput" placeholder="Exactly as it appears on your record">
+    <label for="codeInput">Your Record ID</label>
+    <input type="text" id="codeInput" placeholder="6-character code, sent to you by a leader">
+    <button class="btn" id="lookupBtn">View My Record</button>
+    <p class="err" id="lookupErr">No record found for that name and ID — double check both and try again.</p>
+  </div>
+
+  <div class="panel" id="resultPanel" style="display:none;">
+    <div class="result-head">
+      <h2 style="margin:0;border:none;" id="resultName"></h2>
+      <div style="text-align:right;">
+        <div class="strike-count" id="resultCount"></div>
+        <span class="badge" id="resultBadge"></span>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Infraction</th><th>Session</th></tr></thead>
+      <tbody id="resultBody"></tbody>
+    </table>
+  </div>
+
+  <footer>Your record ID was sent to you by a house leader when an infraction was logged. Keep it private — anyone with your name and ID can view your record.</footer>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxsGlq8hxM8XuE6j9lbd4l_kUOWqZ1xVEHPehDxdxcyyrQ6UeRP0uHuzCfAUYF5UkCl/exec";
+
+  const TIERS = [
+    { threshold: 1, name: "Verbal Warning", color: "#1f5f5b" },
+    { threshold: 2, name: "Session Timeout", color: "#b8892b" },
+    { threshold: 3, name: "Bank Fine", color: "#7a1f3d" },
+    { threshold: 4, name: "HICOM Referral", color: "#2e1138" },
+  ];
+  function tierFor(count){ let t = TIERS[0]; for (const tier of TIERS) if (count >= tier.threshold) t = tier; return t; }
+  function escapeHtml(str){ if (!str) return ''; return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  document.getElementById('lookupBtn').addEventListener('click', async function(){
+    const player = document.getElementById('playerInput').value.trim();
+    const code = document.getElementById('codeInput').value.trim();
+    document.getElementById('lookupErr').style.display = 'none';
+    if (!player || !code) return;
+
+    this.disabled = true; this.textContent = 'Checking…';
+    try {
+      const res = await fetch(`${API_URL}?mode=lookup&player=${encodeURIComponent(player)}&passcode=${encodeURIComponent(code)}`);
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Not found');
+
+      const entries = data.entries || [];
+      const tier = tierFor(entries.length);
+
+      document.getElementById('resultName').textContent = player;
+      document.getElementById('resultCount').textContent = `${entries.length} strike${entries.length === 1 ? '' : 's'}`;
+      const badge = document.getElementById('resultBadge');
+      badge.textContent = tier.name;
+      badge.style.background = tier.color;
+
+      const body = document.getElementById('resultBody');
+      body.innerHTML = entries.length ? entries.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(e => `
+        <tr>
+          <td>${e.Date || '—'}</td>
+          <td>${escapeHtml(e["Infraction Type"])}</td>
+          <td>${escapeHtml(e.Session) || '—'}</td>
+        </tr>`).join('') : `<tr><td colspan="3"><p class="empty">No infractions on file.</p></td></tr>`;
+
+      document.getElementById('lookupPanel').style.display = 'none';
+      document.getElementById('resultPanel').style.display = 'block';
+    } catch(err){
+      document.getElementById('lookupErr').style.display = 'block';
+      console.error(err);
+    } finally {
+      this.disabled = false; this.textContent = 'View My Record';
+    }
+  });
+
+  document.getElementById('codeInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') document.getElementById('lookupBtn').click();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Violeta Rosa — Ledger of Conduct</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Cinzel:wght@500;700&family=Jost:wght@400;500;600&display=swap');
+  :root{
+    --ink:#2b1830; --violet:#4a1d5c; --violet-deep:#2e1138;
+    --wine:#7a1f3d; --gold:#b8892b; --gold-light:#d9b96a; --teal:#1f5f5b; --line:rgba(74,29,92,0.18); --pagebg:#150a1a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, rgba(74,29,92,0.35), transparent 60%),radial-gradient(1000px 500px at 100% 0%, rgba(184,137,43,0.16), transparent 55%),var(--pagebg);color:var(--ink);font-family:'Jost', sans-serif;min-height:100vh;padding-bottom:60px;}
+  header{background:linear-gradient(180deg, var(--violet-deep), var(--violet) 70%, var(--violet));color:#f4ecdd;padding:44px 24px 30px;text-align:center;border-bottom:4px solid var(--gold);position:relative;}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:4px;background:repeating-linear-gradient(90deg, var(--gold-light) 0 10px, transparent 10px 20px);opacity:.6;}
+  header h1{font-family:'Cinzel', serif;font-weight:700;letter-spacing:.06em;font-size:clamp(24px, 4vw, 38px);margin:0 0 6px;}
+  header p{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:18px;margin:0;color:var(--gold-light);}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px;}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px;}
+  .cta{
+    font-family:'Cinzel', serif;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;
+    padding:12px 24px;border-radius:4px;text-decoration:none;transition:transform .12s ease;
+  }
+  .cta:hover{transform:translateY(-1px);}
+  .cta.primary{background:var(--gold);color:var(--violet-deep);}
+  .cta.primary:hover{background:var(--gold-light);}
+  .cta.secondary{background:transparent;color:var(--gold-light);border:1px solid var(--gold-light);}
+  .cta.secondary:hover{background:rgba(217,185,106,0.12);}
+  .seal-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px;}
+  .tier-card{flex:1 1 200px;max-width:230px;background:#fffdf8;border:1px solid var(--line);border-top:4px solid var(--tier-color, var(--gold));border-radius:4px;padding:16px 16px 14px;box-shadow:0 2px 6px rgba(43,24,48,0.08);}
+  .tier-card .num{font-family:'Cinzel', serif;font-weight:700;color:var(--tier-color, var(--gold));font-size:13px;letter-spacing:.08em;text-transform:uppercase;}
+  .tier-card h3{margin:6px 0 4px;font-family:'Cormorant Garamond', serif;font-size:20px;color:var(--ink);}
+  .tier-card p{margin:0;font-size:13px;color:#5a4a5e;line-height:1.4;}
+  .panel{background:#fffdf8;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 18px rgba(43,24,48,0.07);padding:26px 24px;margin-top:34px;}
+  .panel h2{font-family:'Cinzel', serif;font-size:18px;letter-spacing:.04em;color:var(--violet);margin:0 0 14px;display:flex;align-items:center;gap:10px;}
+  .panel h2::after{content:"";flex:1;height:1px;background:var(--line);}
+  .panel p, .panel li{font-size:14.5px;line-height:1.6;color:#3a2740;}
+  .panel ol, .panel ul{margin:0;padding-left:22px;}
+  .panel li{margin-bottom:8px;}
+  .panel li:last-child{margin-bottom:0;}
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px;}
+  .role-card{background:#faf5e9;border:1px solid var(--line);border-radius:5px;padding:16px;}
+  .role-card h3{margin:0 0 6px;font-family:'Cinzel', serif;font-size:13px;letter-spacing:.04em;color:var(--violet);text-transform:uppercase;}
+  .role-card p{margin:0;font-size:13.5px;color:#5a4a5e;line-height:1.5;}
+  footer{text-align:center;margin-top:40px;font-size:12px;color:#8a7699;}
+  @media (max-width:640px){ .role-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ledger of Conduct</h1>
+  <p>House of Violeta Rosa · Session Discipline Record</p>
+  <div class="cta-row">
+    <a class="cta primary" href="violeta-rosa-lookup.html">Check My Record</a>
+    <a class="cta secondary" href="violeta-rosa-hicom.html">HICOM Access</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="seal-row" id="tierLegend"></div>
+
+  <div class="panel">
+    <h2>How This Works</h2>
+    <p>This ledger tracks conduct during Violeta Rosa sessions. Strikes escalate through four tiers, shown above, from a verbal warning up to a HICOM referral.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Roles</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <h3>HICOM</h3>
+        <p>Logs new infractions, and can edit or delete any entry — all from one access code-protected page.</p>
+      </div>
+      <div class="role-card">
+        <h3>Players</h3>
+        <p>Can check their own record — strikes on file and current standing — using their name and the Record ID sent to them by a leader.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>What Happens When You're Cited</h2>
+    <ol>
+      <li>A HICOM member logs the infraction, noting what happened and when.</li>
+      <li>The ledger calculates your current strike count and standing automatically.</li>
+      <li>You're sent a short message with the infraction, the consequence, and your Record ID.</li>
+      <li>You can check your full record anytime using that ID on the "Check My Record" page.</li>
+    </ol>
+  </div>
+
+  <footer>Record IDs are private — don't share yours with anyone outside the house.</footer>
+</div>
+
+<script>
+  const TIERS = [
+    { threshold: 1, name: "Verbal Warning", color: "#1f5f5b", desc: "Logged. No penalty — a clear reminder of expectations." },
+    { threshold: 2, name: "Session Timeout", color: "#b8892b", desc: "Barred from Violeta Rosa sessions for a set number of sessions." },
+    { threshold: 3, name: "Bank Fine", color: "#7a1f3d", desc: "Coin fine deducted from the Asteria bank via Asteriabot." },
+    { threshold: 4, name: "HICOM Referral", color: "#2e1138", desc: "Reported to Asteria HICOM for bringing heat on the faction." },
+  ];
+  document.getElementById('tierLegend').innerHTML = TIERS.map(t => `
+    <div class="tier-card" style="--tier-color:${t.color}">
+      <div class="num">Strike ${t.threshold}</div><h3>${t.name}</h3><p>${t.desc}</p>
+    </div>`).join('');
+</script>
+
+</body>
+</html>
