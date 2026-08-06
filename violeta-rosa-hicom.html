@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Violeta Rosa — HICOM Access</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Cinzel:wght@500;700&family=Jost:wght@400;500;600&display=swap');
+  :root{
+    --ink:#2b1830; --violet:#4a1d5c; --violet-deep:#2e1138;
+    --wine:#7a1f3d; --gold:#b8892b; --gold-light:#d9b96a; --teal:#1f5f5b; --line:rgba(74,29,92,0.18); --pagebg:#150a1a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, rgba(74,29,92,0.35), transparent 60%),radial-gradient(1000px 500px at 100% 0%, rgba(184,137,43,0.16), transparent 55%),var(--pagebg);color:var(--ink);font-family:'Jost', sans-serif;min-height:100vh;padding-bottom:60px;}
+  header{background:linear-gradient(180deg, var(--violet-deep), var(--violet) 70%, var(--violet));color:#f4ecdd;padding:44px 24px 30px;text-align:center;border-bottom:4px solid var(--gold);position:relative;}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:4px;background:repeating-linear-gradient(90deg, var(--gold-light) 0 10px, transparent 10px 20px);opacity:.6;}
+  header h1{font-family:'Cinzel', serif;font-weight:700;letter-spacing:.06em;font-size:clamp(22px, 4vw, 34px);margin:0 0 6px;}
+  header p{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:17px;margin:0;color:var(--gold-light);}
+  .navlinks{margin-top:14px;font-size:12.5px;}
+  .navlinks a{color:var(--gold-light);text-decoration:none;border-bottom:1px dotted var(--gold-light);margin:0 8px;}
+  .sync-status{font-size:12px;margin-top:10px;color:var(--gold-light);opacity:.85;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+  .seal-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px;}
+  .tier-card{flex:1 1 200px;max-width:230px;background:#fffdf8;border:1px solid var(--line);border-top:4px solid var(--tier-color, var(--gold));border-radius:4px;padding:16px 16px 14px;box-shadow:0 2px 6px rgba(43,24,48,0.08);}
+  .tier-card .num{font-family:'Cinzel', serif;font-weight:700;color:var(--tier-color, var(--gold));font-size:13px;letter-spacing:.08em;text-transform:uppercase;}
+  .tier-card h3{margin:6px 0 4px;font-family:'Cormorant Garamond', serif;font-size:20px;}
+  .tier-card p{margin:0;font-size:13px;color:#5a4a5e;line-height:1.4;}
+  .panel{background:#fffdf8;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 18px rgba(43,24,48,0.07);padding:26px 24px;margin-top:34px;}
+  .panel h2{font-family:'Cinzel', serif;font-size:18px;letter-spacing:.04em;color:var(--violet);margin:0 0 18px;display:flex;align-items:center;gap:10px;}
+  .panel h2::after{content:"";flex:1;height:1px;background:var(--line);}
+  form.entry{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;}
+  form.entry .full{grid-column:1/-1;}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--violet);margin-bottom:5px;font-weight:500;}
+  input, select, textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:4px;background:#fff;font-family:'Jost', sans-serif;font-size:14.5px;color:var(--ink);}
+  textarea{resize:vertical;min-height:56px;}
+  input:focus, select:focus, textarea:focus{outline:2px solid var(--gold-light);outline-offset:1px;}
+  .btn{font-family:'Cinzel', serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;background:var(--violet);color:#fff;border:none;padding:11px 22px;border-radius:4px;cursor:pointer;}
+  .btn:hover{background:var(--violet-deep);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn.gold{background:var(--gold);color:var(--violet-deep);}
+  .btn.gold:hover{background:var(--gold-light);}
+  .btn.wine{background:var(--wine);}
+  .btn.wine:hover{background:#5c1730;}
+  .btn.ghost{background:transparent;color:var(--wine);border:1px solid var(--wine);padding:6px 12px;font-size:11px;}
+  .btn.ghost:hover{background:var(--wine);color:#fff;}
+  .btn.small{padding:8px 16px;font-size:11.5px;}
+  .confirm{background:#eef7f0;border:1px solid #8fbf9a;color:#1f5f2f;padding:16px 18px;border-radius:5px;margin-top:20px;display:none;}
+  .confirm h3{margin:0 0 8px;font-family:'Cinzel', serif;font-size:14px;color:#1f5f2f;}
+  .confirm textarea{background:#fff;margin-top:8px;min-height:90px;}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px;}
+  .toolbar .field{display:flex;flex-direction:column;min-width:130px;}
+  .toolbar .field label{margin-bottom:4px;}
+  .toolbar input[type=text]{min-width:180px;}
+  .toolbar .spacer{flex:1;}
+
+  .action-bar{
+    display:flex;align-items:center;gap:12px;background:#f4ecdd;border:1px solid var(--line);
+    border-radius:5px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--violet);
+  }
+  .action-bar strong{font-family:'Cinzel', serif;}
+  .action-bar .spacer{flex:1;}
+
+  .table-scroll{max-height:520px;overflow-y:auto;border:1px solid var(--line);border-radius:5px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{position:sticky;top:0;background:#fdf8ee;z-index:1;}
+  th{font-family:'Cinzel', serif;font-size:11px;letter-spacing:.05em;text-transform:uppercase;text-align:left;color:var(--violet);border-bottom:2px solid var(--violet);padding:9px 10px;}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:hover td{background:rgba(74,29,92,0.03);}
+  td.notes-cell{max-width:220px;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.02em;color:#fff;white-space:nowrap;}
+  .empty{text-align:center;padding:30px 10px;color:#8a7a8e;font-style:italic;font-family:'Cormorant Garamond', serif;font-size:17px;}
+  .gate{max-width:420px;margin:70px auto 0;text-align:center;}
+  .gate .panel{margin-top:0;}
+  .gate p{font-size:13px;color:#5a4a5e;}
+  .gate .err{color:var(--wine);font-size:13px;margin-top:10px;display:none;}
+  .warn{background:#fff3e0;border:1px solid #e0b060;color:#6b4a10;padding:12px 16px;border-radius:5px;font-size:13px;margin-top:26px;}
+
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(20,10,25,0.65);z-index:50;
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .modal{background:#fffdf8;border-radius:6px;max-width:560px;width:100%;padding:26px 24px;box-shadow:0 10px 40px rgba(0,0,0,0.4);max-height:90vh;overflow-y:auto;}
+  .modal h2{font-family:'Cinzel', serif;font-size:17px;color:var(--violet);margin:0 0 18px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+  footer{text-align:center;margin-top:40px;font-size:12px;color:#8a7699;}
+
+  @media (max-width:640px){
+    form.entry{grid-template-columns:1fr;}
+    table, thead, tbody, th, td, tr{display:block;}
+    thead{display:none;}
+    tr{border-bottom:2px solid var(--line);padding:10px 6px;display:block;}
+    td{border:none;padding:4px 0;}
+    td::before{content:attr(data-label);display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--gold);font-weight:600;}
+    .table-scroll{max-height:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>HICOM Access</h1>
+  <p>House of Violeta Rosa · Ledger of Conduct</p>
+  <div class="navlinks"><a href="index.html">Home</a> · <a href="violeta-rosa-lookup.html">Player lookup</a></div>
+  <div class="sync-status" id="syncStatus">HICOM access required</div>
+</header>
+
+<div class="wrap">
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h2>Enter Access Code</h2>
+      <label for="pwInput">HICOM Password</label>
+      <input type="password" id="pwInput" placeholder="••••••••">
+      <button class="btn gold" id="pwSubmit" style="width:100%;margin-top:14px;">Unlock</button>
+      <p class="err" id="pwError">Incorrect password.</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none;">
+
+  <div class="seal-row" id="tierLegend"></div>
+
+  <div class="panel">
+    <h2>Log an Infraction</h2>
+    <form class="entry" id="entryForm">
+      <div>
+        <label for="player">Player / Username</label>
+        <input type="text" id="player" required placeholder="e.g. Baebasaur">
+      </div>
+      <div>
+        <label for="date">Date</label>
+        <input type="date" id="date" required>
+      </div>
+      <div>
+        <label for="session">Session</label>
+        <input type="text" id="session" placeholder="e.g. Violeta Rosa Session — 6/18">
+      </div>
+      <div>
+        <label for="infraction">Infraction Type</label>
+        <select id="infraction">
+          <option>Ignored no-raid rule</option>
+          <option>Unprovoked PvP / attacking others</option>
+          <option>Disrespecting leaders</option>
+          <option>Disruptive behavior</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="notes">Notes</label>
+        <textarea id="notes" placeholder="What happened, who reported it, etc."></textarea>
+      </div>
+      <div>
+        <label for="loggedBy">Logged By</label>
+        <input type="text" id="loggedBy" placeholder="Your name">
+      </div>
+      <div style="align-self:end;">
+        <button type="submit" class="btn gold" id="submitBtn" style="width:100%;">Add to Ledger</button>
+      </div>
+    </form>
+
+    <div class="confirm" id="confirmBox">
+      <h3>Entry logged</h3>
+      <p id="confirmText"></p>
+      <label style="margin-top:6px;">Suggested message to send the player</label>
+      <textarea id="messageText" readonly></textarea>
+      <button class="btn ghost" id="copyMsgBtn" style="margin-top:8px;border-color:var(--teal);color:var(--teal);">Copy message</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Full Record</h2>
+
+    <div class="toolbar">
+      <div class="field" style="flex:1 1 220px;">
+        <label for="search">Search</label>
+        <input type="text" id="search" placeholder="Search any field…">
+      </div>
+      <div class="field">
+        <label for="filterPlayer">Player</label>
+        <select id="filterPlayer"><option value="">All</option></select>
+      </div>
+      <div class="field">
+        <label for="filterInfraction">Offense</label>
+        <select id="filterInfraction"><option value="">All</option></select>
+      </div>
+      <div class="field">
+        <label for="filterReporter">Reporter</label>
+        <select id="filterReporter"><option value="">All</option></select>
+      </div>
+      <div class="field">
+        <label for="filterTier">Tier</label>
+        <select id="filterTier">
+          <option value="">All</option>
+          <option>Verbal Warning</option>
+          <option>Session Timeout</option>
+          <option>Bank Fine</option>
+          <option>HICOM Referral</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="sortBy">Sort by</label>
+        <select id="sortBy">
+          <option value="date-desc">Date (Newest)</option>
+          <option value="date-asc">Date (Oldest)</option>
+          <option value="player-asc">Player (A–Z)</option>
+          <option value="player-desc">Player (Z–A)</option>
+          <option value="infraction-asc">Offense (A–Z)</option>
+          <option value="reporter-asc">Reporter (A–Z)</option>
+        </select>
+      </div>
+      <div class="field">
+        <button class="btn ghost small" id="clearFiltersBtn" style="border-color:var(--violet);color:var(--violet);">Clear filters</button>
+      </div>
+    </div>
+
+    <div class="action-bar" id="actionBar" style="display:none;">
+      <span><strong id="selectedCount">0</strong> selected</span>
+      <div class="spacer"></div>
+      <button class="btn small gold" id="editSelectedBtn">Edit</button>
+      <button class="btn small wine" id="deleteSelectedBtn">Delete</button>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:32px;"><input type="checkbox" id="selectAll"></th>
+            <th>Date</th><th>Player</th><th>Offense</th><th>Session</th><th>Notes</th><th>Reporter</th><th>Tier</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>Edits and deletions here write directly to the House Sheet.</footer>
+</div>
+
+<div class="wrap" id="errorBox" style="display:none;">
+  <div class="warn">Couldn't connect to the ledger backend. Make sure <code>API_URL</code> near the top of the script is set to your deployed Apps Script Web App URL.</div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h2>Edit Entry</h2>
+    <form class="entry" id="editForm">
+      <div>
+        <label for="editPlayer">Player / Username</label>
+        <input type="text" id="editPlayer" required>
+      </div>
+      <div>
+        <label for="editDate">Date</label>
+        <input type="date" id="editDate" required>
+      </div>
+      <div>
+        <label for="editSession">Session</label>
+        <input type="text" id="editSession">
+      </div>
+      <div>
+        <label for="editInfraction">Infraction Type</label>
+        <select id="editInfraction">
+          <option>Ignored no-raid rule</option>
+          <option>Unprovoked PvP / attacking others</option>
+          <option>Disrespecting leaders</option>
+          <option>Disruptive behavior</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="editNotes">Notes</label>
+        <textarea id="editNotes"></textarea>
+      </div>
+      <div class="full">
+        <label for="editLoggedBy">Logged By</label>
+        <input type="text" id="editLoggedBy">
+      </div>
+    </form>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelEditBtn" style="border-color:var(--violet);color:var(--violet);">Cancel</button>
+      <button class="btn gold" id="saveEditBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxsGlq8hxM8XuE6j9lbd4l_kUOWqZ1xVEHPehDxdxcyyrQ6UeRP0uHuzCfAUYF5UkCl/exec";
+  const LOOKUP_URL = "https://hvrmonymvrie.github.io/Violeta-Rosa/violeta-rosa-lookup.html";
+
+  const TIERS = [
+    { threshold: 1, name: "Verbal Warning", color: "#1f5f5b", desc: "Logged. No penalty — a clear reminder of expectations." },
+    { threshold: 2, name: "Session Timeout", color: "#b8892b", desc: "Barred from Violeta Rosa sessions for a set number of sessions." },
+    { threshold: 3, name: "Bank Fine", color: "#7a1f3d", desc: "Coin fine deducted from the Asteria bank via Asteriabot." },
+    { threshold: 4, name: "HICOM Referral", color: "#2e1138", desc: "Reported to Asteria HICOM for bringing heat on the faction." },
+  ];
+
+  let entries = [];       // raw entries with computed .ResultingTier
+  let password = "";
+  let selectedIds = new Set();
+
+  function tierLegend(){
+    document.getElementById('tierLegend').innerHTML = TIERS.map(t => `
+      <div class="tier-card" style="--tier-color:${t.color}">
+        <div class="num">Strike ${t.threshold}</div><h3>${t.name}</h3><p>${t.desc}</p>
+      </div>`).join('');
+  }
+  function tierFor(count){ let t = TIERS[0]; for (const tier of TIERS) if (count >= tier.threshold) t = tier; return t; }
+  function escapeHtml(str){ if (!str) return ''; return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function computeResultingTiers(list){
+    // Chronological order per player, based on Submitted At (true logging order).
+    const byPlayer = {};
+    const sorted = [...list].sort((a,b) => new Date(a["Submitted At"]) - new Date(b["Submitted At"]));
+    sorted.forEach(e => {
+      const key = (e.Player || '').toLowerCase();
+      byPlayer[key] = (byPlayer[key] || 0) + 1;
+      e._strikeIndex = byPlayer[key];
+      e._resultingTier = tierFor(byPlayer[key]);
+    });
+    return list;
+  }
+
+  async function fetchEntries(){
+    const res = await fetch(`${API_URL}?mode=admin&password=${encodeURIComponent(password)}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed to load');
+    entries = computeResultingTiers(data.entries || []);
+  }
+
+  function populateFilterOptions(){
+    const players = [...new Set(entries.map(e => e.Player))].filter(Boolean).sort();
+    const infractions = [...new Set(entries.map(e => e["Infraction Type"]))].filter(Boolean).sort();
+    const reporters = [...new Set(entries.map(e => e["Logged By"]))].filter(Boolean).sort();
+
+    const fillSelect = (id, values) => {
+      const sel = document.getElementById(id);
+      const current = sel.value;
+      sel.innerHTML = '<option value="">All</option>' + values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      sel.value = values.includes(current) ? current : '';
+    };
+    fillSelect('filterPlayer', players);
+    fillSelect('filterInfraction', infractions);
+    fillSelect('filterReporter', reporters);
+  }
+
+  function getFiltered(){
+    const search = document.getElementById('search').value.trim().toLowerCase();
+    const fPlayer = document.getElementById('filterPlayer').value;
+    const fInfraction = document.getElementById('filterInfraction').value;
+    const fReporter = document.getElementById('filterReporter').value;
+    const fTier = document.getElementById('filterTier').value;
+    const sortBy = document.getElementById('sortBy').value;
+
+    let list = entries.filter(e => {
+      if (fPlayer && e.Player !== fPlayer) return false;
+      if (fInfraction && e["Infraction Type"] !== fInfraction) return false;
+      if (fReporter && e["Logged By"] !== fReporter) return false;
+      if (fTier && e._resultingTier.name !== fTier) return false;
+      if (search){
+        const haystack = [e.Date, e.Player, e.Session, e["Infraction Type"], e.Notes, e["Logged By"]]
+          .map(v => (v || '').toString().toLowerCase()).join(' | ');
+        if (!haystack.includes(search)) return false;
+      }
+      return true;
+    });
+
+    list.sort((a,b) => {
+      switch(sortBy){
+        case 'date-asc': return new Date(a.Date) - new Date(b.Date);
+        case 'date-desc': return new Date(b.Date) - new Date(a.Date);
+        case 'player-asc': return (a.Player||'').localeCompare(b.Player||'');
+        case 'player-desc': return (b.Player||'').localeCompare(a.Player||'');
+        case 'infraction-asc': return (a["Infraction Type"]||'').localeCompare(b["Infraction Type"]||'');
+        case 'reporter-asc': return (a["Logged By"]||'').localeCompare(b["Logged By"]||'');
+        default: return 0;
+      }
+    });
+
+    return list;
+  }
+
+  function render(){
+    populateFilterOptions();
+    const filtered = getFiltered();
+    const body = document.getElementById('ledgerBody');
+
+    body.innerHTML = filtered.length ? filtered.map(e => `
+      <tr data-id="${e.ID}">
+        <td><input type="checkbox" class="rowSelect" data-id="${e.ID}" ${selectedIds.has(e.ID) ? 'checked' : ''}></td>
+        <td data-label="Date">${e.Date || '—'}</td>
+        <td data-label="Player">${escapeHtml(e.Player)}</td>
+        <td data-label="Offense">${escapeHtml(e["Infraction Type"])}</td>
+        <td data-label="Session">${escapeHtml(e.Session) || '—'}</td>
+        <td data-label="Notes" class="notes-cell">${escapeHtml(e.Notes) || '—'}</td>
+        <td data-label="Reporter">${escapeHtml(e["Logged By"]) || '—'}</td>
+        <td data-label="Tier"><span class="badge" style="background:${e._resultingTier.color}">${e._resultingTier.name}</span></td>
+      </tr>`).join('') : `<tr><td colspan="8"><p class="empty">No entries match this view.</p></td></tr>`;
+
+    body.querySelectorAll('.rowSelect').forEach(cb => cb.addEventListener('change', onRowSelect));
+    updateActionBar();
+
+    const allVisible = filtered.map(e => e.ID);
+    const selectAllBox = document.getElementById('selectAll');
+    selectAllBox.checked = allVisible.length > 0 && allVisible.every(id => selectedIds.has(id));
+  }
+
+  function onRowSelect(e){
+    const id = e.target.dataset.id;
+    if (e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
+    updateActionBar();
+  }
+
+  function updateActionBar(){
+    const bar = document.getElementById('actionBar');
+    document.getElementById('selectedCount').textContent = selectedIds.size;
+    bar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
+    document.getElementById('editSelectedBtn').disabled = selectedIds.size !== 1;
+    document.getElementById('deleteSelectedBtn').disabled = selectedIds.size < 1;
+  }
+
+  document.getElementById('selectAll').addEventListener('change', function(){
+    const filtered = getFiltered();
+    if (this.checked) filtered.forEach(e => selectedIds.add(e.ID));
+    else filtered.forEach(e => selectedIds.delete(e.ID));
+    render();
+  });
+
+  ['search','filterPlayer','filterInfraction','filterReporter','filterTier','sortBy'].forEach(id => {
+    document.getElementById(id).addEventListener('input', render);
+    document.getElementById(id).addEventListener('change', render);
+  });
+
+  document.getElementById('clearFiltersBtn').addEventListener('click', function(){
+    document.getElementById('search').value = '';
+    document.getElementById('filterPlayer').value = '';
+    document.getElementById('filterInfraction').value = '';
+    document.getElementById('filterReporter').value = '';
+    document.getElementById('filterTier').value = '';
+    document.getElementById('sortBy').value = 'date-desc';
+    render();
+  });
+
+  // ---- Edit modal ----
+  document.getElementById('editSelectedBtn').addEventListener('click', function(){
+    const id = [...selectedIds][0];
+    const entry = entries.find(e => e.ID === id);
+    if (!entry) return;
+    document.getElementById('editPlayer').value = entry.Player || '';
+    document.getElementById('editDate').value = entry.Date || '';
+    document.getElementById('editSession').value = entry.Session || '';
+    document.getElementById('editInfraction').value = entry["Infraction Type"] || '';
+    document.getElementById('editNotes').value = entry.Notes || '';
+    document.getElementById('editLoggedBy').value = entry["Logged By"] || '';
+    document.getElementById('editModal').dataset.id = id;
+    document.getElementById('editModal').style.display = 'flex';
+  });
+  document.getElementById('cancelEditBtn').addEventListener('click', function(){
+    document.getElementById('editModal').style.display = 'none';
+  });
+  document.getElementById('editModal').addEventListener('click', function(e){
+    if (e.target === this) this.style.display = 'none';
+  });
+  document.getElementById('saveEditBtn').addEventListener('click', async function(){
+    const id = document.getElementById('editModal').dataset.id;
+    const payload = {
+      action: 'edit', password, id,
+      date: document.getElementById('editDate').value,
+      player: document.getElementById('editPlayer').value.trim(),
+      infraction: document.getElementById('editInfraction').value,
+      session: document.getElementById('editSession').value.trim(),
+      notes: document.getElementById('editNotes').value.trim(),
+      loggedBy: document.getElementById('editLoggedBy').value.trim(),
+    };
+    this.disabled = true; this.textContent = 'Saving…';
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      document.getElementById('editModal').style.display = 'none';
+      selectedIds.clear();
+      await fetchEntries();
+      render();
+    } catch(err){
+      alert('Could not save changes.');
+      console.error(err);
+    } finally {
+      this.disabled = false; this.textContent = 'Save Changes';
+    }
+  });
+
+  // ---- Bulk delete ----
+  document.getElementById('deleteSelectedBtn').addEventListener('click', async function(){
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    const label = ids.length === 1 ? 'this entry' : `these ${ids.length} entries`;
+    if (!confirm(`Permanently delete ${label}?`)) return;
+    this.disabled = true; this.textContent = 'Deleting…';
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'bulkDelete', password, ids }) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      selectedIds.clear();
+      await fetchEntries();
+      render();
+    } catch(err){
+      alert('Could not delete entries.');
+      console.error(err);
+    } finally {
+      this.disabled = false; this.textContent = 'Delete';
+    }
+  });
+
+  // ---- Log new infraction ----
+  document.getElementById('entryForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    const playerName = document.getElementById('player').value.trim();
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'add',
+          password,
+          player: playerName,
+          date: document.getElementById('date').value,
+          session: document.getElementById('session').value.trim(),
+          infraction: document.getElementById('infraction').value,
+          notes: document.getElementById('notes').value.trim(),
+          loggedBy: document.getElementById('loggedBy').value.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Failed to save');
+
+      await fetchEntries();
+      render();
+
+      const strikeCount = entries.filter(en => en.Player === playerName).length;
+      const tier = tierFor(strikeCount);
+
+      document.getElementById('confirmBox').style.display = 'block';
+      document.getElementById('confirmText').textContent =
+        `${playerName} now has ${strikeCount} strike${strikeCount === 1 ? '' : 's'} on file — current standing: ${tier.name}.` +
+        (data.isNewPasscode ? ' A new record ID was created for them.' : ' They already have a record ID on file.');
+
+      const lookupLine = (LOOKUP_URL && LOOKUP_URL.indexOf('PASTE_YOUR') !== 0) ? LOOKUP_URL : '[lookup page link]';
+      document.getElementById('messageText').value =
+`Hi ${playerName},
+
+This is an official notice from House Violeta Rosa regarding a conduct infraction during a recent session.
+
+Infraction: ${document.getElementById('infraction').value}
+Consequence: ${tier.name} — ${tier.desc}
+Strikes on file: ${strikeCount}
+
+You can review your full record anytime at:
+${lookupLine}
+
+Your Record ID: ${data.passcode}
+Please keep this ID private — you'll need it to check your record in the future.`;
+
+      this.reset();
+    } catch(err){
+      alert('Could not save this entry — check your connection and try again.');
+      console.error(err);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Add to Ledger';
+    }
+  });
+
+  document.getElementById('copyMsgBtn').addEventListener('click', function(){
+    const ta = document.getElementById('messageText');
+    ta.select();
+    navigator.clipboard.writeText(ta.value).then(() => {
+      this.textContent = 'Copied!';
+      setTimeout(() => this.textContent = 'Copy message', 1500);
+    });
+  });
+
+  // ---- Gate ----
+  document.getElementById('pwSubmit').addEventListener('click', async function(){
+    password = document.getElementById('pwInput').value;
+    this.disabled = true; this.textContent = 'Checking…';
+    document.getElementById('pwError').style.display = 'none';
+    try {
+      await fetchEntries();
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('syncStatus').textContent = 'Synced';
+      render();
+    } catch(err){
+      document.getElementById('pwError').style.display = 'block';
+      console.error(err);
+    } finally {
+      this.disabled = false; this.textContent = 'Unlock';
+    }
+  });
+  document.getElementById('pwInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') document.getElementById('pwSubmit').click();
+  });
+
+  tierLegend();
+  if (!API_URL || API_URL.indexOf('PASTE_YOUR') === 0){
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'block';
+    document.getElementById('syncStatus').textContent = 'Not configured';
+  }
+</script>
+</body>
+</html>
