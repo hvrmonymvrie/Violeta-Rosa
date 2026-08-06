@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Violeta Rosa — HICOM Access</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Cinzel:wght@500;700&family=Jost:wght@400;500;600&display=swap');
+  :root{
+    --parchment:#f4ecdd; --ink:#2b1830; --violet:#4a1d5c; --violet-deep:#2e1138;
+    --wine:#7a1f3d; --gold:#b8892b; --gold-light:#d9b96a; --teal:#1f5f5b; --line:rgba(74,29,92,0.18);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, rgba(74,29,92,0.06), transparent 60%),radial-gradient(1000px 500px at 100% 0%, rgba(184,137,43,0.08), transparent 55%),var(--parchment);color:var(--ink);font-family:'Jost', sans-serif;min-height:100vh;padding-bottom:60px;}
+  header{background:linear-gradient(180deg, var(--violet-deep), var(--violet) 70%, var(--violet));color:var(--parchment);padding:44px 24px 30px;text-align:center;border-bottom:4px solid var(--wine);position:relative;}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:4px;background:repeating-linear-gradient(90deg, var(--gold-light) 0 10px, transparent 10px 20px);opacity:.6;}
+  header h1{font-family:'Cinzel', serif;font-weight:700;letter-spacing:.06em;font-size:clamp(22px, 4vw, 32px);margin:0 0 6px;}
+  header p{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:17px;margin:0;color:var(--gold-light);}
+  .navlinks{margin-top:14px;font-size:12.5px;}
+  .navlinks a{color:var(--gold-light);text-decoration:none;border-bottom:1px dotted var(--gold-light);margin:0 8px;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px;}
+  .panel{background:#fffdf8;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 18px rgba(43,24,48,0.07);padding:26px 24px;margin-top:34px;}
+  .panel h2{font-family:'Cinzel', serif;font-size:18px;letter-spacing:.04em;color:var(--violet);margin:0 0 18px;display:flex;align-items:center;gap:10px;}
+  .panel h2::after{content:"";flex:1;height:1px;background:var(--line);}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--violet);margin-bottom:5px;font-weight:500;}
+  input, select, textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:4px;background:#fff;font-family:'Jost', sans-serif;font-size:14.5px;color:var(--ink);}
+  textarea{resize:vertical;min-height:56px;}
+  .btn{font-family:'Cinzel', serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;background:var(--violet);color:#fff;border:none;padding:11px 22px;border-radius:4px;cursor:pointer;}
+  .btn:hover{background:var(--violet-deep);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .btn.wine{background:var(--wine);}
+  .btn.wine:hover{background:#5c1730;}
+  .btn.ghost{background:transparent;color:var(--wine);border:1px solid var(--wine);padding:6px 12px;font-size:11px;}
+  .btn.ghost:hover{background:var(--wine);color:#fff;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{font-family:'Cinzel', serif;font-size:11px;letter-spacing:.05em;text-transform:uppercase;text-align:left;color:var(--violet);border-bottom:2px solid var(--violet);padding:8px 10px;}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .empty{text-align:center;padding:30px 10px;color:#8a7a8e;font-style:italic;font-family:'Cormorant Garamond', serif;font-size:17px;}
+  .gate{max-width:420px;margin:70px auto;text-align:center;}
+  .gate .panel{margin-top:0;}
+  .gate p{font-size:13px;color:#5a4a5e;}
+  .row-edit input, .row-edit select, .row-edit textarea{margin-bottom:4px;font-size:12.5px;padding:6px 8px;}
+  footer{text-align:center;margin-top:40px;font-size:12px;color:#8a7a8e;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>HICOM Access</h1>
+  <p>House of Violeta Rosa · Full Ledger Administration</p>
+  <div class="navlinks"><a href="violeta-rosa-ledger.html">Back to main ledger</a> · <a href="violeta-rosa-lookup.html">Player lookup</a></div>
+</header>
+
+<div class="wrap">
+
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h2>Enter Access Code</h2>
+      <label for="pwInput">HICOM Password</label>
+      <input type="password" id="pwInput" placeholder="••••••••">
+      <button class="btn wine" id="pwSubmit" style="width:100%;margin-top:14px;">Unlock</button>
+      <p id="pwError" style="color:var(--wine);display:none;margin-top:10px;">Incorrect password.</p>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display:none;">
+    <div class="panel">
+      <h2>Full Record</h2>
+      <table>
+        <thead><tr><th>Date</th><th>Player</th><th>Infraction</th><th>Session</th><th>Notes</th><th>Logged By</th><th>Actions</th></tr></thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>Edits and deletions here write directly to the House Sheet. Handle with care.</footer>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxsGlq8hxM8XuE6j9lbd4l_kUOWqZ1xVEHPehDxdxcyyrQ6UeRP0uHuzCfAUYF5UkCl/exec";
+  let password = "";
+  let entries = [];
+
+  function escapeHtml(str){ if (!str) return ''; return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  const INFRACTIONS = ["Ignored no-raid rule","Unprovoked PvP / attacking others","Disrespecting leaders","Disruptive behavior","Other"];
+
+  async function loadEntries(){
+    const res = await fetch(`${API_URL}?mode=admin&password=${encodeURIComponent(password)}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed to load');
+    entries = data.entries || [];
+    render();
+  }
+
+  function render(){
+    const body = document.getElementById('ledgerBody');
+    const rows = [...entries].sort((a,b) => new Date(b.Date) - new Date(a.Date));
+    body.innerHTML = rows.length ? rows.map(e => `
+      <tr data-id="${e.ID}">
+        <td><input type="date" class="f-date" value="${e.Date}"></td>
+        <td><input type="text" class="f-player" value="${escapeHtml(e.Player)}"></td>
+        <td><select class="f-infraction">${INFRACTIONS.map(i => `<option ${i===e["Infraction Type"]?'selected':''}>${i}</option>`).join('')}</select></td>
+        <td><input type="text" class="f-session" value="${escapeHtml(e.Session)}"></td>
+        <td><textarea class="f-notes">${escapeHtml(e.Notes)}</textarea></td>
+        <td><input type="text" class="f-loggedby" value="${escapeHtml(e["Logged By"])}"></td>
+        <td style="white-space:nowrap;">
+          <button class="btn ghost saveBtn" style="border-color:var(--teal);color:var(--teal);">Save</button>
+          <button class="btn ghost deleteBtn">Delete</button>
+        </td>
+      </tr>`).join('') : `<tr><td colspan="7"><p class="empty">No entries yet.</p></td></tr>`;
+
+    body.querySelectorAll('.saveBtn').forEach(btn => btn.addEventListener('click', onSave));
+    body.querySelectorAll('.deleteBtn').forEach(btn => btn.addEventListener('click', onDelete));
+  }
+
+  async function onSave(e){
+    const tr = e.target.closest('tr');
+    const id = tr.dataset.id;
+    const payload = {
+      action: 'edit', password, id,
+      date: tr.querySelector('.f-date').value,
+      player: tr.querySelector('.f-player').value.trim(),
+      infraction: tr.querySelector('.f-infraction').value,
+      session: tr.querySelector('.f-session').value.trim(),
+      notes: tr.querySelector('.f-notes').value.trim(),
+      loggedBy: tr.querySelector('.f-loggedby').value.trim(),
+    };
+    e.target.disabled = true; e.target.textContent = 'Saving…';
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      await loadEntries();
+    } catch(err){
+      alert('Could not save changes.');
+      console.error(err);
+      e.target.disabled = false; e.target.textContent = 'Save';
+    }
+  }
+
+  async function onDelete(e){
+    const tr = e.target.closest('tr');
+    const id = tr.dataset.id;
+    if (!confirm('Permanently delete this entry?')) return;
+    e.target.disabled = true; e.target.textContent = 'Deleting…';
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', password, id }) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      await loadEntries();
+    } catch(err){
+      alert('Could not delete entry.');
+      console.error(err);
+      e.target.disabled = false; e.target.textContent = 'Delete';
+    }
+  }
+
+  document.getElementById('pwSubmit').addEventListener('click', async function(){
+    password = document.getElementById('pwInput').value;
+    this.disabled = true; this.textContent = 'Checking…';
+    try {
+      await loadEntries();
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+    } catch(err){
+      document.getElementById('pwError').style.display = 'block';
+      this.disabled = false; this.textContent = 'Unlock';
+    }
+  });
+  document.getElementById('pwInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') document.getElementById('pwSubmit').click();
+  });
+</script>
+</body>
+</html>
